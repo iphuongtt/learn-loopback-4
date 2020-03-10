@@ -1,5 +1,5 @@
 import {BootMixin} from '@loopback/boot';
-import {ApplicationConfig} from '@loopback/core';
+import {ApplicationConfig, BindingScope} from '@loopback/core';
 import {
   RestExplorerBindings,
   RestExplorerComponent,
@@ -9,12 +9,16 @@ import {RestApplication} from '@loopback/rest';
 import {ServiceMixin} from '@loopback/service-proxy';
 import path from 'path';
 import {MySequence} from './sequence';
+import { GreetingComponent } from './components';
+import { GREETING_SERVICE } from './keys';
 
 export class LearnLoopback4Application extends BootMixin(
   ServiceMixin(RepositoryMixin(RestApplication)),
 ) {
   constructor(options: ApplicationConfig = {}) {
     super(options);
+
+    this.component(GreetingComponent)
 
     // Set up the custom sequence
     this.sequence(MySequence);
@@ -38,5 +42,15 @@ export class LearnLoopback4Application extends BootMixin(
         nested: true,
       },
     };
+  }
+  
+  async greet() {
+    const greetingService = await this.getGreetingService()
+    let msg = await greetingService.greet('zh', 'Raymond')
+    console.log(msg)
+  }
+
+  async getGreetingService() {
+    return this.get(GREETING_SERVICE);
   }
 }

@@ -5,6 +5,7 @@ export {LearnLoopback4Application};
 
 export async function main(options: ApplicationConfig = {}) {
   const app = new LearnLoopback4Application(options);
+  await app.greet()
   await app.boot();
   await app.start();
 
